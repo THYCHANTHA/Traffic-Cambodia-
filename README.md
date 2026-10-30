@@ -1,95 +1,79 @@
-# Import necessary libraries
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+# Traffic Accident Analysis Template (Synthetic Data, Cambodian Cities)
 
-# Step 1: Generate Synthetic Traffic Accident Data
-np.random.seed(42)
+A short exploratory-data-analysis notebook that **generates a synthetic dataset of traffic accidents** labelled with four Cambodian cities, then cleans it, summarises it, plots it and prints a list of recommendations.
 
-# Number of samples
-n_samples = 1000
+> **Important: the data are synthetic.** The notebook creates 1,000 random records with `numpy.random`. It does **not** use real traffic or accident data, so nothing in this project describes real traffic in Cambodia. The repository name is easy to misread; treat this as a practice / template notebook for an EDA workflow.
 
-# Generate random data
-dates = pd.date_range(start='2023-01-01', periods=n_samples, freq='D')
-locations = np.random.choice(['Phnom Penh', 'Siem Reap', 'Battambang', 'Sihanoukville'], n_samples)
-severity = np.random.choice(['Minor', 'Major', 'Fatal'], n_samples, p=[0.7, 0.2, 0.1])
-vehicles_involved = np.random.randint(1, 5, n_samples)
-cause = np.random.choice(['Speeding', 'Drunk Driving', 'Weather', 'Mechanical Failure'], n_samples)
-fatalities = np.where(severity == 'Fatal', np.random.randint(1, 5, n_samples), 0)
-injuries = np.where(severity != 'Minor', np.random.randint(1, 10, n_samples), 0)
+## Introduction
 
-# Create DataFrame
-df = pd.DataFrame({
-    'date': dates,
-    'location': locations,
-    'severity': severity,
-    'vehicles_involved': vehicles_involved,
-    'cause': cause,
-    'fatalities': fatalities,
-    'injuries': injuries
-})
+The notebook walks through a standard EDA workflow: generate data, inspect it, check missing values, compute summary statistics, plot distributions and correlations, and write conclusions.
 
-# Display the first few rows of the dataset
-df.head()
+## Objectives
 
-# Step 2: Data Cleaning
-# Check for missing values
-print(df.isnull().sum())
+- Practise the steps of an exploratory analysis with pandas, NumPy, Matplotlib and seaborn.
+- Show how severity, location and cause distributions and a correlation matrix can be visualised.
 
-# Summary statistics
-print(df.describe())
+## What the notebook does
 
-# Step 3: Exploratory Data Analysis (EDA)
+| Step | Content |
+|---|---|
+| 1. Generate data | 1,000 daily records from 2023-01-01: `location` (Phnom Penh, Siem Reap, Battambang, Sihanoukville, chosen uniformly at random), `severity` (Minor / Major / Fatal with fixed probabilities 0.7 / 0.2 / 0.1), `cause` (Speeding, Drunk Driving, Weather, Mechanical Failure, uniform), `vehicles_involved` (1 to 4), `fatalities` and `injuries` derived from severity. Random seed 42 |
+| 2. Clean and summarise | Missing-value check (none, by construction) and `describe()` |
+| 3. EDA | Count plots of severity, location and cause |
+| 4. Correlation | One-hot encoding and a correlation heatmap |
+| 5. Visualise | Accidents per month; severity by location |
+| 6. Recommendations | A printed list of five conclusions |
 
-# Severity distribution
-plt.figure(figsize=(10, 6))
-sns.countplot(x='severity', data=df)
-plt.title('Distribution of Accident Severity')
-plt.show()
+## Technologies
 
-# Location distribution
-plt.figure(figsize=(10, 6))
-sns.countplot(x='location', data=df)
-plt.title('Accidents by Location')
-plt.show()
+Python, pandas, NumPy, Matplotlib, seaborn (Jupyter notebook).
 
-# Cause distribution
-plt.figure(figsize=(10, 6))
-sns.countplot(x='cause', data=df)
-plt.title('Causes of Accidents')
-plt.show()
+## Recorded outputs
 
-# Correlation between variables
-plt.figure(figsize=(10, 6))
-sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
-plt.title('Correlation Between Variables')
-plt.show()
+These charts come from the notebook's saved output. They show the random data, **not real accidents**.
 
-# Step 4: Visualization
+| Severity (set by the fixed probabilities) | Accidents by location (uniform random) |
+|---|---|
+| ![Severity](assets/images/synthetic_severity_distribution.png) | ![Location](assets/images/synthetic_accidents_by_location.png) |
 
-# Accidents over time
-plt.figure(figsize=(10, 6))
-df['date'] = pd.to_datetime(df['date'])
-df.set_index('date', inplace=True)
-df.resample('M').size().plot()
-plt.title('Accidents Over Time')
-plt.xlabel('Date')
-plt.ylabel('Number of Accidents')
-plt.show()
+![Accidents over time](assets/images/synthetic_accidents_over_time.png)
 
-# Accidents by severity and location
-plt.figure(figsize=(10, 6))
-sns.countplot(x='location', hue='severity', data=df)
-plt.title('Accidents by Severity and Location')
-plt.show()
+*Figure: one record per day, so the monthly count only reflects the number of days in each month.*
 
-# Step 5: Recommendations
-# Summarize findings and provide data-driven recommendations
+## Findings
 
-print("Conclusion and Recommendations:")
-print("1. Most accidents are minor, but there is a significant number of major and fatal accidents.")
-print("2. Phnom Penh has the highest number of accidents, indicating a need for improved traffic management.")
-print("3. Speeding and drunk driving are leading causes of accidents. Implementing stricter traffic laws and awareness campaigns could help reduce these incidents.")
-print("4. Regular vehicle maintenance checks can help prevent accidents caused by mechanical failure.")
-print("5. Seasonal variations in accidents suggest that weather conditions should be considered in traffic safety measures.")
+**There are no findings about real traffic**, because the data are random. Specifically:
+
+- The severity split reflects the probabilities typed into the code, and the near-equal bars for locations and causes reflect uniform random sampling.
+- The five "Conclusion and Recommendations" printed at the end of the notebook are **hard-coded text, not computed from the data**. For example, it states that "Phnom Penh has the highest number of accidents", but the notebook's own location chart shows Sihanoukville highest in the recorded run.
+
+## Limitations
+
+- Synthetic data only; no real data source is used.
+- The recommendations are written text and are not supported by the data.
+- In the saved notebook, the correlation cell calls `pd(df)` (which would raise an error because `pd` is a module). A heatmap output is recorded, so it was produced by an earlier version of that line (probably `pd.get_dummies`); the stored code is not runnable as written.
+- No data files, tests or requirements file; no real dataset is documented.
+- The notebook's earlier README contained a copy of the notebook code; it is preserved in [docs/original_readme_pasted_code.md](docs/original_readme_pasted_code.md).
+
+## Folder structure
+
+```
+Traffic-Cambodia-/
+├── README.md
+├── notebooks/Traffic_Cambodian.ipynb
+├── docs/original_readme_pasted_code.md   # the previous README (pasted code), kept as found
+└── assets/images/                        # charts from the notebook output (synthetic data)
+```
+
+## Installation and usage
+
+```bash
+pip install pandas numpy matplotlib seaborn jupyter
+jupyter notebook notebooks/Traffic_Cambodian.ipynb
+```
+
+Library versions were not recorded. The notebook needs no input files because it generates its own data (fix the correlation cell first, for example with `pd.get_dummies(df)`).
+
+## References and acknowledgements
+
+None. To analyse real Cambodian road-safety data, replace the generation step with an authorised dataset and re-derive the conclusions from it.
